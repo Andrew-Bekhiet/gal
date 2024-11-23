@@ -22,23 +22,37 @@ final class MethodChannelGal extends GalPlatform {
   }
 
   @override
-  Future<void> putVideo(String path, {String? album}) async {
+  Future<void> putVideo(
+    String path, {
+    String? album,
+    bool saveToVideos = false,
+  }) async {
     await requestAccess(toAlbum: album != null);
-    await _invokeMethod<void>('putVideo', {'path': path, 'album': album});
+    await _invokeMethod<void>('putVideo',
+        {'path': path, 'album': album, 'saveToVideos': saveToVideos});
   }
 
   @override
-  Future<void> putImage(String path, {String? album}) async {
+  Future<void> putImage(
+    String path, {
+    String? album,
+  }) async {
     await requestAccess(toAlbum: album != null);
     await _invokeMethod<void>('putImage', {'path': path, 'album': album});
   }
 
   @override
-  Future<void> putImageBytes(Uint8List bytes,
-      {String? album, required String name}) async {
+  Future<void> putImageBytes(
+    Uint8List bytes, {
+    String? album,
+    required String name,
+  }) async {
     await requestAccess(toAlbum: album != null);
-    await _invokeMethod<void>(
-        'putImageBytes', {'bytes': bytes, 'album': album, 'name': name});
+    await _invokeMethod<void>('putImageBytes', {
+      'bytes': bytes,
+      'album': album,
+      'name': name,
+    });
   }
 
   @override

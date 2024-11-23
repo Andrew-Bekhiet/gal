@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:gal/gal.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -40,7 +39,7 @@ class _AppState extends State<App> {
                 FilledButton(
                   onPressed: () async {
                     final path = await getFilePath('assets/done.mp4');
-                    await Gal.putVideo(path, album: album);
+                    await Gal.putVideo(path, album: album, saveToVideos: true);
                     showSnackbar();
                   },
                   child: const Text('Save Video from file path'),
@@ -80,7 +79,7 @@ class _AppState extends State<App> {
                       'https://github.com/natsuk4ze/gal/raw/main/example/assets/done.mp4',
                       path,
                     );
-                    await Gal.putVideo(path, album: album);
+                    await Gal.putVideo(path, album: album, saveToVideos: true);
                     showSnackbar();
                   },
                   child: const Text('Download Video'),

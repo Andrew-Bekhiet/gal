@@ -65,8 +65,7 @@ public class GalPlugin implements FlutterPlugin, MethodCallHandler, ActivityAwar
             case "putImage": {
                 new Thread(() -> {
                     try {
-                        putMedia(call.argument("path"), call.argument("album"),
-                                call.method.contains("Image"));
+                        putMedia(call.argument("path"), call.argument("album"), call.method.contains("Image") || !(boolean)call.argument("saveToVideos"));
                         new Handler(Looper.getMainLooper()).post(() -> result.success(null));
                     } catch (Exception e) {
                         handleError(e, result);
@@ -169,8 +168,7 @@ public class GalPlugin implements FlutterPlugin, MethodCallHandler, ActivityAwar
     private ContentValues createContentValues(boolean isImage, String name, String extension,
             String album) {
         ContentValues values = new ContentValues();
-        String dirPath = isImage || album != null ? Environment.DIRECTORY_PICTURES
-                : Environment.DIRECTORY_MOVIES;
+        String dirPath = isImage ? Environment.DIRECTORY_PICTURES : Environment.DIRECTORY_MOVIES;
 
         if (USE_EXTERNAL_STORAGE) {
             File dir = new File(Environment.getExternalStoragePublicDirectory(dirPath),

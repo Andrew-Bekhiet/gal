@@ -81,11 +81,11 @@ void HandleError(
 
 IAsyncAction Open() { co_await Launcher::LaunchUriAsync(Uri(L"ms-photos:")); }
 
-static IAsyncAction PutMedia(string path, const optional<string> album) {
+static IAsyncAction PutMedia(string path, const optional<string> album, bool saveToVideos) {
   std::replace(path.begin(), path.end(), '/', '\\');
   const auto file =
       co_await StorageFile::GetFileFromPathAsync(winrt::to_hstring(path));
-  auto folder = KnownFolders::PicturesLibrary();
+  auto folder = saveToVideos ? KnownFolders::VideosLibrary() : KnownFolders::PicturesLibrary();
   if (album) {
     folder = co_await folder.CreateFolderAsync(
         winrt::to_hstring(album.value()),
@@ -95,10 +95,8 @@ static IAsyncAction PutMedia(string path, const optional<string> album) {
                           NameCollisionOption::GenerateUniqueName);
 }
 
-static IAsyncAction PutMediaBytes(const vector<uint8_t>& bytes,
-                                  const optional<string> album,
-                                  const string &name) {
-  auto folder = KnownFolders::PicturesLibrary();
+static IAsyncAction PutMediaBytes(const vector<uint8_t>& bytes, const optional<string> album, const string &name, bool saveToVideos) {
+  auto folder = saveToVideos ? KnownFolders::VideosLibrary() : KnownFolders::PicturesLibrary();
   if (album) {
     folder = co_await folder.CreateFolderAsync(
         winrt::to_hstring(album.value()),
@@ -148,9 +146,10 @@ void GalPlugin::HandleMethodCall(
       album.emplace(*p);
     }
     const auto path = std::get<string>(args->at(EncodableValue("path")));
-    std::thread([path, album, result = std::move(result)]() mutable {
+    const auto saveToVideos = std::get<bool>(args->at(EncodableValue("saveToVideos")));
+    std::thread([path, album, saveToVideos, result = std::move(result)]() mutable {
       try {
-        PutMedia(path, album).get();
+        PutMedia(path, album, saveToVideos).get();
         result->Success();
       } catch (const winrt::hresult_error& e) {
         HandleError(e, std::move(result));
@@ -164,9 +163,10 @@ void GalPlugin::HandleMethodCall(
       album.emplace(*p);
     }
     const auto name = std::get<string>(args->at(EncodableValue("name")));
-    std::thread([bytes, album, name, result = std::move(result)]() mutable {
+    const auto saveToVideos = std::get<bool>(args->at(EncodableValue("saveToVideos")));
+    std::thread([bytes, album, name, saveToVideos, result = std::move(result)]() mutable {
       try {
-        PutMediaBytes(bytes, album, name).get();
+        PutMediaBytes(bytes, album, name, saveToVideos).get();
         result->Success();
       } catch (const winrt::hresult_error& e) {
         HandleError(e, std::move(result));

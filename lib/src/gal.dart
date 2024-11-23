@@ -13,14 +13,20 @@ final class Gal {
   ///
   /// Specify the album with [album]. If it does not exist, it will be created.
   /// [path] must include the file extension.
+  /// [saveToVideos] if true, saves to videos directory. Default is false for backwards compatibility.
   /// ```dart
   /// await Gal.putVideo('${Directory.systemTemp.path}/video.mp4');
   /// ```
   /// Throws an [GalException] If you do not have access premission or
   /// if an error occurs during saving.
   /// See: [Formats](https://github.com/natsuk4ze/gal/wiki/Formats)
-  static Future<void> putVideo(String path, {String? album}) async =>
-      GalPlatform.instance.putVideo(path, album: album);
+  static Future<void> putVideo(
+    String path, {
+    String? album,
+    bool saveToVideos = false,
+  }) async =>
+      GalPlatform.instance
+          .putVideo(path, album: album, saveToVideos: saveToVideos);
 
   /// Save a image to the gallery from file [path].
   ///
@@ -32,7 +38,10 @@ final class Gal {
   /// Throws an [GalException] If you do not have access premission or
   /// if an error occurs during saving.
   /// See: [Formats](https://github.com/natsuk4ze/gal/wiki/Formats)
-  static Future<void> putImage(String path, {String? album}) async =>
+  static Future<void> putImage(
+    String path, {
+    String? album,
+  }) async =>
       GalPlatform.instance.putImage(path, album: album);
 
   /// Save a image to the gallery from [Uint8List].
@@ -45,8 +54,11 @@ final class Gal {
   /// Throws an [GalException] If you do not have access premission or
   /// if an error occurs during saving.
   /// See: [Formats](https://github.com/natsuk4ze/gal/wiki/Formats)
-  static Future<void> putImageBytes(Uint8List bytes,
-          {String? album, String name = 'image'}) async =>
+  static Future<void> putImageBytes(
+    Uint8List bytes, {
+    String? album,
+    String name = 'image',
+  }) async =>
       GalPlatform.instance.putImageBytes(bytes, album: album, name: name);
 
   /// Open gallery app.
